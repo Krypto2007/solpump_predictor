@@ -1,34 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+// src/App.jsx
+import { useEffect, useState } from 'react';
+import { initSocket } from './services/WebSocketService';
+import { predictCrash } from './services/PredictionEngine';
 
-const socket = io('http://localhost:4000'); // Change if deployed elsewhere
-
-function App() {
-  const [crash, setCrash] = useState(null);
-  const [streak, setStreak] = useState(0);
+export default function App() {
+  const [multipliers, setMultipliers] = useState([]);
   const [prediction, setPrediction] = useState(null);
 
   useEffect(() => {
-    socket.on('crash_update', (data) => {
-      setCrash(data.crash);
-      setStreak(data.streak);
-      setPrediction(data.prediction);
+    initSocket((newMultiplier) => {
+      setMultipliers((prev) => [newMultiplier, ...prev.slice(0, 19)]);
+      const pred = predictCrash([newMultiplier, ...multipliers]);
+      setPrediction(pred);
     });
-
-    return () => {
-      socket.off('crash_update');
-    };
-  }, []);
+  }, [multipliers]);
 
   return (
-    <div style={{ fontFamily: 'Arial', padding: 20, maxWidth: 400, margin: 'auto' }}>
-      <h1>Solpump Crash Predictor</h1>
-      <p><strong>Last Crash:</strong> {crash ? crash + 'x' : 'Loading...'}</p>
-      <p><strong>Current Streak:</strong> {streak}</p>
-      <p><strong>Prediction:</strong> {prediction ? `${prediction.label} (Confidence: ${prediction.confidence}%)` : 'Loading...'}</p>
-      <small>Data updates live from Solpump backend.</small>
+    <div className="p-4 font-mono text-white bg-black min-h-screen">
+      <h1 className="text-3xl font-bold mb-4">🔮 Solpump Predictor Dashboard</h1>
+
+      <div className="mb-4">
+        <strong>Latest Prediction:</strong>{' '}
+        <span className={prediction?.willCrash ? 'text-red-500' : 'text-green-400'}>
+          {prediction?.willCrash ? '⚠️ Likely Crash' : '✅ Safe'}
+        </span>
+        <br />
+        <strong>Confidence:</strong> {Math.round((prediction?.confidence || 0) * 100)}%
+      </div>
+
+      <h2 className="text-xl font-semibold mb-2">📊 Recent Multipliers</h2>
+      <ul className="grid grid-cols-5 gap-2">
+        {multipliers.map((m, i) => (
+          <li key={i} className="p-2 bg-gray-800 rounded text-center">
+            {m}×
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
-
-export default App;

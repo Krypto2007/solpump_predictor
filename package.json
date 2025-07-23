@@ -1,6 +1,6 @@
 {
-  "name": "solpump_predictor_website",
-  "version": "1.1.0",
+  "name": "solpump_predictor",
+  "version": "2.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,8 +10,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "recharts": "^2.7.0",
-    "uuid": "^9.0.0",
-    "@solana/web3.js": "^1.95.0"
+    "socket.io-client": "^4.6.1",
+    "@solana/web3.js": "^1.95.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "vite": "^4.5.0",

@@ -1,6 +1,14 @@
 {
-  "name": "backend",
+  "name": "solpump-frontend",
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "server": "node server.js"
+    "dev": "vite"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
   }
 }
